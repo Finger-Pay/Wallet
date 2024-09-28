@@ -476,6 +476,23 @@ export default function Index() {
                   hideBackground
                 />
               </CardView>
+              <CardView>
+                <CryptoInfoCard
+                  onPress={() => router.push(ROUTES.neoDetails)}
+                  title="Neox T4"
+                  caption={`${ethBalance} Gas`}
+                  details={formatDollar(ethUsd)}
+                  icon={
+                    <EthereumIcon
+                      width={35}
+                      height={35}
+                      fill={theme.colors.white}
+                    />
+                  }
+                  hideBackground
+                />
+              </CardView>
+
             </CryptoInfoCardContainer>
           </BottomScrollView>
         </BottomSheet>

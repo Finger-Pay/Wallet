@@ -2,7 +2,10 @@ import "react-native-get-random-values";
 import "@ethersproject/shims";
 
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import solanaService from "../services/SolanaService";
+import * as ethers from "ethers";
+import { RootState } from "./index";
+import ethService from "../services/EthereumService";
+
 import { truncateBalance } from "../utils/truncateBalance";
 import {
   GeneralStatus,
@@ -13,7 +16,7 @@ import {
   WalletState,
 } from "./types";
 
-const CONFIRMATION_TIMEOUT = 100000;
+const CONFIRMATION_TIMEOUT = 60000;
 const initialState: WalletState = {
   activeIndex: 0,
   addresses: [
@@ -34,16 +37,56 @@ const initialState: WalletState = {
   ],
 };
 
+export const fetchEthereumBalance = createAsyncThunk<
+  string,
+  string,
+  {
+    state: RootState;
+    rejectValue: string;
+  }
+>(
+  "wallet/fetchEthereumBalance",
+  async (address: ethers.AddressLike, { rejectWithValue }) => {
+    try {
+      const balance = await ethService.getBalance(address);
+      return ethers.formatEther(balance);
+    } catch (error) {
+      console.error("error", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchEthereumBalanceInterval = createAsyncThunk<
+  string,
+  string,
+  {
+    state: RootState;
+    rejectValue: string;
+  }
+>(
+  "wallet/fetchEthereumBalanceInterval",
+  async (address: ethers.AddressLike, { rejectWithValue }) => {
+    try {
+      const balance = await ethService.getBalance(address);
+      return ethers.formatEther(balance);
+    } catch (error) {
+      console.error("error", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export interface FetchTransactionsArg {
   address: string;
   paginationKey?: string[] | string;
 }
 
-export const fetchSolanaTransactions = createAsyncThunk(
-  "wallet/fetchSolanaTransactions",
-  async (address: string, { rejectWithValue }): Promise<any> => {
+export const fetchEthereumTransactions = createAsyncThunk(
+  "wallet/fetchEthereumTransactions",
+  async ({ address }: FetchTransactionsArg, { rejectWithValue }) => {
     try {
-      const transactions = await solanaService.getTransactionsByWallet(address);
+      const transactions = await ethService.fetchTransactions(address);
       return transactions;
     } catch (error) {
       console.error("error", error);
@@ -52,11 +95,11 @@ export const fetchSolanaTransactions = createAsyncThunk(
   }
 );
 
-export const fetchSolanaTransactionsInterval = createAsyncThunk(
-  "wallet/fetchSolanaTransactionsInterval",
-  async (address: string, { rejectWithValue }): Promise<any> => {
+export const fetchEthereumTransactionsInterval = createAsyncThunk(
+  "wallet/fetchEthereumTransactionsInterval",
+  async ({ address }: FetchTransactionsArg, { rejectWithValue }) => {
     try {
-      const transactions = await solanaService.getTransactionsByWallet(address);
+      const transactions = await ethService.fetchTransactions(address);
       return transactions;
     } catch (error) {
       console.error("error", error);
@@ -64,50 +107,23 @@ export const fetchSolanaTransactionsInterval = createAsyncThunk(
     }
   }
 );
-
-export const fetchSolanaBalance = createAsyncThunk(
-  "wallet/fetchSolanaBalance",
-  async (tokenAddress: string, { rejectWithValue }): Promise<any> => {
-    try {
-      const currentSolBalance = await solanaService.getBalance(tokenAddress);
-      return currentSolBalance;
-    } catch (error) {
-      console.error("error", error);
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-export const fetchSolanaBalanceInterval = createAsyncThunk(
-  "wallet/fetchSolanaBalanceInterval",
-  async (tokenAddress: string, { rejectWithValue }): Promise<any> => {
-    try {
-      const currentSolBalance = await solanaService.getBalance(tokenAddress);
-      return currentSolBalance;
-    } catch (error) {
-      console.error("error", error);
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-interface SolTransactionArgs {
-  privateKey: Uint8Array;
-  address: string;
+interface EthTransactionArgs {
+  address: ethers.AddressLike;
+  privateKey: string;
   amount: string;
 }
 
-export const sendSolanaTransaction = createAsyncThunk(
-  "solana/sendSolanaTransaction",
+export const sendEthereumTransaction = createAsyncThunk(
+  "ethereum/sendEthereumTransaction",
   async (
-    { privateKey, address, amount }: SolTransactionArgs,
+    { address, privateKey, amount }: EthTransactionArgs,
     { rejectWithValue }
   ) => {
     try {
-      const response = await solanaService.sendTransaction(
-        privateKey,
+      const response = await ethService.sendTransaction(
         address,
-        parseFloat(amount)
+        privateKey,
+        amount
       );
       return response;
     } catch (error) {
@@ -116,11 +132,11 @@ export const sendSolanaTransaction = createAsyncThunk(
   }
 );
 
-export const confirmSolanaTransaction = createAsyncThunk(
-  "wallet/confirmSolanaTransaction",
+export const confirmEthereumTransaction = createAsyncThunk(
+  "wallet/confirmEthereumTransaction",
   async ({ txHash }: { txHash: string }, { rejectWithValue }) => {
     try {
-      const confirmationPromise = solanaService.confirmTransaction(txHash);
+      const confirmationPromise = ethService.confirmTransaction(txHash);
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(
           () => reject(new Error("Transaction confirmation timed out")),
@@ -139,116 +155,119 @@ export const confirmSolanaTransaction = createAsyncThunk(
   }
 );
 
-export const solanaSlice = createSlice({
-  name: "solana",
+export const ethereumSlice = createSlice({
+  name: "ethereum",
   initialState,
   reducers: {
-    saveSolanaAddresses: (state, action: PayloadAction<AddressState[]>) => {
+    saveEthereumAddresses1: (state, action: PayloadAction<AddressState[]>) => {
       state.addresses = [...action.payload];
       state.activeIndex = 0;
     },
-    depositSolana: (state, action: PayloadAction<number>) => {
+    depositEthereum: (state, action: PayloadAction<number>) => {
       state.addresses[state.activeIndex].balance += action.payload;
     },
-    withdrawSolana: (state, action: PayloadAction<number>) => {
+    withdrawEthereum: (state, action: PayloadAction<number>) => {
       if (state.addresses[state.activeIndex].balance >= action.payload) {
         state.addresses[state.activeIndex].balance -= action.payload;
       } else {
-        console.warn("Not enough Solana balance");
+        console.warn("Not enough Ethereum balance");
       }
     },
-    addSolanaTransaction: (state, action: PayloadAction<Transaction>) => {
+    addEthereumTransaction: (state, action: PayloadAction<Transaction>) => {
       state.addresses[state.activeIndex].transactionMetadata.transactions.push(
         action.payload
       );
     },
-    updateSolanaBalance: (state, action: PayloadAction<number>) => {
-      state.addresses[state.activeIndex].balance = action.payload;
+    updateEthereumBalance: (state, action: PayloadAction<string>) => {
+      state.addresses[state.activeIndex].balance = parseFloat(action.payload);
     },
-    updateSolanaAddresses: (state, action: PayloadAction<AddressState>) => {
+    updateEthereumAddresses: (state, action: PayloadAction<AddressState>) => {
       state.addresses.push(action.payload);
     },
-    // TODO: Refactor. This is an tech debt from redux refactor
-    updateSolanaAccountName: (
+    updateAccountName: (
       state,
       action: PayloadAction<{
         accountName: string;
-        solAddress: string;
+        ethAddress: string;
       }>
     ) => {
-      const solAddressIndex = state.addresses.findIndex(
-        (item) => item.address === action.payload.solAddress
+      const ethAddressIndex = state.addresses.findIndex(
+        (item) => item.address === action.payload.ethAddress
       );
-      if (solAddressIndex !== -1) {
-        state.addresses[solAddressIndex].accountName =
+      if (ethAddressIndex !== -1) {
+        state.addresses[ethAddressIndex].accountName =
           action.payload.accountName;
       }
     },
     // TODO: Refactor. This is an tech debt from redux refactor
-    setActiveSolanaAccount: (state, action: PayloadAction<number>) => {
+    setActiveEthereumAccount: (state, action: PayloadAction<number>) => {
       state.activeIndex = action.payload;
     },
-    resetSolanaState: (state) => {
+    resetEthereumState: (state) => {
       state = initialState;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSolanaBalance.pending, (state) => {
+      .addCase(fetchEthereumBalance.pending, (state) => {
         state.addresses[state.activeIndex].status = GeneralStatus.Loading;
       })
-      .addCase(fetchSolanaBalance.fulfilled, (state, action) => {
+      .addCase(fetchEthereumBalance.fulfilled, (state, action) => {
         state.addresses[state.activeIndex].balance = parseFloat(
           truncateBalance(action.payload)
         );
         state.addresses[state.activeIndex].status = GeneralStatus.Idle;
       })
-      .addCase(fetchSolanaBalance.rejected, (state, action) => {
+      .addCase(fetchEthereumBalance.rejected, (state, action) => {
         state.addresses[state.activeIndex].status = GeneralStatus.Failed;
         console.error("Failed to fetch balance:", action.payload);
       })
-      .addCase(fetchSolanaBalanceInterval.fulfilled, (state, action) => {
+      .addCase(fetchEthereumBalanceInterval.fulfilled, (state, action) => {
         state.addresses[state.activeIndex].balance = parseFloat(
           truncateBalance(action.payload)
         );
         state.addresses[state.activeIndex].status = GeneralStatus.Idle;
       })
-      .addCase(fetchSolanaBalanceInterval.rejected, (state, action) => {
+      .addCase(fetchEthereumBalanceInterval.rejected, (state, action) => {
         state.addresses[state.activeIndex].status = GeneralStatus.Failed;
         console.error("Failed to fetch balance:", action.payload);
       })
-      .addCase(fetchSolanaTransactions.pending, (state) => {
+      .addCase(fetchEthereumTransactions.pending, (state) => {
         state.addresses[state.activeIndex].status = GeneralStatus.Loading;
       })
-      .addCase(fetchSolanaTransactions.fulfilled, (state, action) => {
+      .addCase(fetchEthereumTransactions.fulfilled, (state, action) => {
         if (action.payload) {
           state.addresses[state.activeIndex].failedNetworkRequest = false;
           state.addresses[state.activeIndex].transactionMetadata.transactions =
-            action.payload;
+            action.payload.transferHistory;
+          state.addresses[state.activeIndex].transactionMetadata.paginationKey =
+            action.payload.paginationKey;
         } else {
           state.addresses[state.activeIndex].failedNetworkRequest = true;
         }
         state.addresses[state.activeIndex].status = GeneralStatus.Idle;
       })
-      .addCase(fetchSolanaTransactions.rejected, (state, action) => {
+      .addCase(fetchEthereumTransactions.rejected, (state, action) => {
         state.addresses[state.activeIndex].status = GeneralStatus.Failed;
         console.error("Failed to fetch transactions:", action.payload);
       })
-      .addCase(fetchSolanaTransactionsInterval.fulfilled, (state, action) => {
+      .addCase(fetchEthereumTransactionsInterval.fulfilled, (state, action) => {
         if (action.payload) {
           state.addresses[state.activeIndex].failedNetworkRequest = false;
           state.addresses[state.activeIndex].transactionMetadata.transactions =
-            action.payload;
+            action.payload.transferHistory;
+          state.addresses[state.activeIndex].transactionMetadata.paginationKey =
+            action.payload.paginationKey;
         } else {
           state.addresses[state.activeIndex].failedNetworkRequest = true;
         }
         state.addresses[state.activeIndex].status = GeneralStatus.Idle;
       })
-      .addCase(fetchSolanaTransactionsInterval.rejected, (state, action) => {
+      .addCase(fetchEthereumTransactionsInterval.rejected, (state, action) => {
         state.addresses[state.activeIndex].status = GeneralStatus.Failed;
         console.error("Failed to fetch transactions:", action.payload);
       })
-      .addCase(confirmSolanaTransaction.pending, (state, action) => {
+      .addCase(confirmEthereumTransaction.pending, (state, action) => {
         const { txHash } = action.meta.arg;
         const newConfirmation: TransactionConfirmation = {
           txHash,
@@ -258,7 +277,7 @@ export const solanaSlice = createSlice({
           newConfirmation
         );
       })
-      .addCase(confirmSolanaTransaction.fulfilled, (state, action) => {
+      .addCase(confirmEthereumTransaction.fulfilled, (state, action) => {
         const { txHash, confirmation } = action.payload;
         const index = state.addresses[
           state.activeIndex
@@ -271,7 +290,7 @@ export const solanaSlice = createSlice({
             : ConfirmationState.Failed;
         }
       })
-      .addCase(confirmSolanaTransaction.rejected, (state, action) => {
+      .addCase(confirmEthereumTransaction.rejected, (state, action) => {
         const { txHash, error } = action.payload as any;
         const index = state.addresses[
           state.activeIndex
@@ -285,34 +304,34 @@ export const solanaSlice = createSlice({
           ].error = error;
         }
       })
-      .addCase(sendSolanaTransaction.pending, (state) => {
+      .addCase(sendEthereumTransaction.pending, (state) => {
         state.addresses[state.activeIndex].status = GeneralStatus.Loading;
       })
-      .addCase(sendSolanaTransaction.fulfilled, (state, action) => {
+      .addCase(sendEthereumTransaction.fulfilled, (state, action) => {
         state.addresses[state.activeIndex].status = GeneralStatus.Idle;
 
         state.addresses[state.activeIndex].transactionConfirmations.push({
-          txHash: action.payload,
+          txHash: action.payload.hash,
           status: ConfirmationState.Pending,
         });
       })
-      .addCase(sendSolanaTransaction.rejected, (state, action) => {
+      .addCase(sendEthereumTransaction.rejected, (state, action) => {
         state.addresses[state.activeIndex].status = GeneralStatus.Failed;
-        console.error("Failed to send Solana transaction:", action.payload);
+        console.error("Failed to send transaction:", action.payload);
       });
   },
 });
 
 export const {
-  depositSolana,
-  withdrawSolana,
-  addSolanaTransaction,
-  updateSolanaBalance,
-  saveSolanaAddresses,
-  resetSolanaState,
-  setActiveSolanaAccount,
-  updateSolanaAddresses,
-  updateSolanaAccountName,
-} = solanaSlice.actions;
+  depositEthereum,
+  withdrawEthereum,
+  addEthereumTransaction,
+  updateEthereumBalance,
+  saveEthereumAddresses1,
+  resetEthereumState,
+  setActiveEthereumAccount,
+  updateEthereumAddresses,
+  updateAccountName,
+} = ethereumSlice.actions;
 
-export default solanaSlice.reducer;
+export default ethereumSlice.reducer;

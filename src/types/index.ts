@@ -118,3 +118,8 @@ export interface GenericTransactionFlatList {
     direction: string;
   };
 }
+export enum ConfirmationState {
+  Pending = "Pending",
+  Confirmed = "Confirmed",
+  Failed = "Failed",
+}

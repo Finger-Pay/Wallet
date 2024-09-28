@@ -79,6 +79,17 @@ export default function SendOptions() {
             icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
           />
         </CardView>
+        <CardView>
+          <CryptoInfoCard
+            onPress={() => router.push("/token/send/Neox")}
+            title="Neox T4"
+            caption={`${ethBalance} Gas`}
+            details={formatDollar(ethUsd)}
+            icon={
+              <EthereumIcon width={35} height={35} fill={theme.colors.white} />
+            }
+          />
+        </CardView>
       </ContentContainer>
     </SafeAreaContainer>
   );

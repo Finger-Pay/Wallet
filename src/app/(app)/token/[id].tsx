@@ -162,7 +162,7 @@ export default function Index() {
   const { id } = useLocalSearchParams();
   const theme = useTheme();
   const isStateLoading = useLoadingState();
-  const chainName = id as string;
+  const chainName = id as string=="Neox"?"ethereum":id as string;
 
   const activeIndex = useSelector(
     (state: RootState) => state.ethereum.activeIndex
@@ -241,6 +241,7 @@ export default function Index() {
 
   const renderItem = ({ item }) => {
     if (isStateLoading) {
+
       return <CryptoInfoCardSkeleton hideBackground={true} />;
     }
     if (failedStatus) {
@@ -267,12 +268,13 @@ export default function Index() {
     }
 
     if (isEthereum) {
+      console.log(item.asset)
       return (
         <CryptoInfoCard
           onPress={() => _handlePressButtonAsync(urlBuilder(item.hash))}
           title={capitalizeFirstLetter(item.direction)}
           caption={`To ${truncateWalletAddress(item.to)}`}
-          details={`${sign} ${item.value} ${item.asset}`}
+          details={`${sign} ${item.value} ${id=="Neox"?"Gas":item.asset}`}
           icon={<Icon width={35} height={35} fill={theme.colors.white} />}
         />
       );
@@ -397,7 +399,7 @@ export default function Index() {
         <ContentContainer>
           <BalanceContainer>
             <BalanceTokenText>
-              {tokenBalance} {ticker}
+              {tokenBalance} {id=="Neox"?"Gas":ticker}
             </BalanceTokenText>
             <BalanceUsdText>{formatDollar(usdBalance)}</BalanceUsdText>
           </BalanceContainer>
@@ -406,7 +408,7 @@ export default function Index() {
               icon={
                 <SendIcon width={25} height={25} fill={theme.colors.primary} />
               }
-              onPress={() => router.push(`token/send/${chainName}`)}
+              onPress={() => router.push(`token/send/${id=="Neox"?"Neox":chainName}`)}
               btnText="Send"
             />
             <View style={{ width: 15 }} />
@@ -418,16 +420,16 @@ export default function Index() {
                   fill={theme.colors.primary}
                 />
               }
-              onPress={() => router.push(`token/receive/${chainName}`)}
+              onPress={() => router.push(`token/receive/${id=="Neox"?"Neox":chainName}`)}
               btnText="Receive"
             />
           </ActionContainer>
-          <SectionTitle>About {capitalizeFirstLetter(chainName)}</SectionTitle>
+          <SectionTitle>About {capitalizeFirstLetter(id=="Neox"?"Neox":chainName)}</SectionTitle>
           <CryptoInfoCardContainer>
             <TokenInfoCard
-              tokenName={capitalizeFirstLetter(chainName)}
-              tokenSymbol={ticker}
-              network={capitalizeFirstLetter(chainName)}
+              tokenName={capitalizeFirstLetter(id=="Neox"?"Gas":chainName)}
+              tokenSymbol={id=="Neox"?"Neox":ticker}
+              network={capitalizeFirstLetter(id=="Neox"?"Neox":chainName)}
             />
           </CryptoInfoCardContainer>
         </ContentContainer>
@@ -505,7 +507,7 @@ export default function Index() {
               return (
                 <ComingSoonView>
                   <ComingSoonText>
-                    Add some {ticker} to your wallet
+                    Add some {id=='Neox'?"Gas":ticker} to your wallet
                   </ComingSoonText>
                 </ComingSoonView>
               );

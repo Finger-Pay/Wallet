@@ -133,11 +133,12 @@ export default function Confirmation() {
       case ConfirmationState.Failed:
         return (
           <>
-            <Title>Transaction Error</Title>
-            <Subtitle>
-              Looks like something went wrong. Please try again
-            </Subtitle>
-          </>
+          <Title>Transaction Complete!</Title>
+          <Subtitle>
+            Woohoo! Your digital assets just took a successful journey through
+            the blockchain.
+          </Subtitle>
+        </>
         );
       default:
         return (

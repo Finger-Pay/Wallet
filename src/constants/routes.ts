@@ -13,6 +13,7 @@ export interface Routes {
   receiveOptions: string;
   ethDetails: string;
   solDetails: string;
+  neoDetails: string;
   sendEth: string;
   sendSol: string;
   sendConfirmation: string;
@@ -38,6 +39,7 @@ export const ROUTES: Routes = {
   send: "/token/send",
   receiveOptions: "/token/receive/receive-options",
   ethDetails: "/token/ethereum",
+  neoDetails:"/token/Neox",
   solDetails: "/token/solana",
   sendEth: "/token/send/ethereum",
   sendSol: "/token/send/solana",

@@ -130,7 +130,7 @@ const ModalCloseText = styled.Text<{ theme: ThemeType }>`
 export default function ReceivePage() {
   const theme = useTheme();
   const { receive } = useLocalSearchParams();
-  const chainName = receive as string;
+  const chainName = receive as string=="Neox"?"ethereum":receive as string;
   const navigation = useNavigation();
   const activeIndex = useSelector(
     (state: RootState) => state.ethereum.activeIndex
@@ -170,7 +170,7 @@ export default function ReceivePage() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: `Receive ${capitalizeFirstLetter(chainName)}`,
+      title: `Receive ${capitalizeFirstLetter(receive=="Neox"?"GAS":chainName)}`,
     });
   }, [navigation]);
 
@@ -197,7 +197,7 @@ export default function ReceivePage() {
           </ReceiveButtonView>
         </ReceiveTextInputContainer>
         <InfoText>
-          Share this address to receive {capitalizeFirstLetter(chainName)}
+          Share this address to receive {capitalizeFirstLetter(receive=="Neox"?"GAS":chainName)}
         </InfoText>
       </ContentContainer>
 

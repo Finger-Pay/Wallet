@@ -166,7 +166,7 @@ export default function SendPage() {
   const theme = useTheme();
   const formRef = useRef<FormikProps<FormValues>>(null);
 
-  const chainName = send as string;
+  const chainName = send as string=="Neox"?"ethereum":send as string;
   const toWalletAddress = toAddress as string;
   const ticker = TICKERS[chainName];
 
@@ -402,7 +402,7 @@ export default function SendPage() {
                   <AddressTextInput
                     isAddressInputFocused={isAddressInputFocused}
                     placeholder={`Recipient's ${capitalizeFirstLetter(
-                      chainName
+                      send=="Neox"?"Neo":chainName
                     )} address`}
                     value={values.address}
                     onChangeText={handleChange("address")}
@@ -428,7 +428,7 @@ export default function SendPage() {
                       keyboardType="numeric"
                     />
                     <AmountDetailsView>
-                      <TickerText>{ticker}</TickerText>
+                      <TickerText>{send=="Neox"?"Gas":ticker}</TickerText>
                       <MaxButton
                         onPress={() =>
                           calculateMaxAmount(
@@ -449,7 +449,7 @@ export default function SendPage() {
                     {renderDollarAmount(values.amount)}
                   </TransactionDetailsText>
                   <TransactionDetailsText>
-                    Available {tokenBalance} {ticker}
+                    Available {tokenBalance} {send=="Neox"?"Gas":ticker}
                   </TransactionDetailsText>
                 </TransactionDetailsContainer>
               </TextContainer>

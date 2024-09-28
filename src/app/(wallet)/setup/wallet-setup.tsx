@@ -154,6 +154,23 @@ export default function WalletSetup() {
         transactionConfirmations: [],
       };
 
+      const ethereumAccount1:AddressState={
+        accountName: "Account 1",
+        derivationPath: `m/44'/888'/0'/0'`,
+        address: ethWallet.address,
+        publicKey: ethWallet.publicKey,
+        balance: 0,
+        transactionMetadata: {
+          paginationKey: undefined,
+          transactions: [],
+        },
+        failedNetworkRequest: false,
+        status: GeneralStatus.Idle,
+        transactionConfirmations: [],
+
+      }
+
+
       const solanaAccount: AddressState = {
         accountName: "Account 1",
         derivationPath: `m/44'/501'/0'/0'`,
@@ -171,6 +188,7 @@ export default function WalletSetup() {
 
       dispatch(saveEthereumAddresses([ethereumAccount]));
       dispatch(saveSolanaAddresses([solanaAccount]));
+      dispatch(saveEthereumAddresses([ethereumAccount1]))
 
       router.push({
         pathname: ROUTES.seedPhrase,

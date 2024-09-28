@@ -95,7 +95,7 @@ const ReceiveCard: React.FC<ReceiveCardsProps> = ({
             router.replace({
               pathname: "camera",
               params: {
-                chain: chainName.toLowerCase(),
+                chain: chainName.toLowerCase()=="neox"? "ethereum":chainName.toLowerCase(),
               },
             })
           }
@@ -136,6 +136,11 @@ export default function ReceiveOptionsPage() {
           chainName="Solana"
           address={solAddress}
           icon={<Solana width={25} height={25} />}
+        />
+         <ReceiveCard
+          chainName="Neox"
+          address={ethAddress}
+          icon={<Ethereum width={35} height={35} />}
         />
       </ContentContainer>
     </SafeAreaContainer>
