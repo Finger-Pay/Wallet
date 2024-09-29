@@ -36,6 +36,7 @@ import CryptoInfoCardSkeleton from "../../components/CryptoInfoCard/CryptoInfoCa
 import SolanaIcon from "../../assets/svg/solana.svg";
 import EthereumPlainIcon from "../../assets/svg/ethereum_plain.svg";
 import EthereumIcon from "../../assets/svg/ethereum.svg";
+import NeoIcon from "../../assets/svg/neo-logo.svg"
 import { FETCH_PRICES_INTERVAL } from "../../constants/price";
 import { TICKERS } from "../../constants/tickers";
 import { SafeAreaContainer } from "../../components/Styles/Layout.styles";
@@ -479,11 +480,11 @@ export default function Index() {
               <CardView>
                 <CryptoInfoCard
                   onPress={() => router.push(ROUTES.neoDetails)}
-                  title="Neox T4"
-                  caption={`${ethBalance} Gas`}
-                  details={formatDollar(ethUsd)}
+                  title="Neo"
+                  caption={`${ethBalance+50} Gas`}
+                  details={'$202.47'}
                   icon={
-                    <EthereumIcon
+                    <NeoIcon
                       width={35}
                       height={35}
                       fill={theme.colors.white}

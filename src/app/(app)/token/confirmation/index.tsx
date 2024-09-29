@@ -79,7 +79,7 @@ export default function Confirmation() {
   
   console.log("local", useLocalSearchParams())
   const { txHash, amount: rawAmount,blockchain  } = useLocalSearchParams();
-  console.log("Received amount:", Number(rawAmount)*100000000);
+  // console.log("Received amount:", Number(rawAmount)*100000000);
 
   const [amount, setAmount] = useState<number>(
     Array.isArray(rawAmount) ? parseFloat(rawAmount[0]) : parseFloat(rawAmount) || 0
