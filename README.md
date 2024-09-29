@@ -27,6 +27,7 @@
 
 - **Video Walkthrough**: [FingerPay Demo](https://drive.google.com/drive/folders/1iGlfKLvuEm_uSIM1fvlz-u4qAChesnHg?usp=sharing)
 
+<img src="assets/View.png" alt= "icon" />
 
 ## Vision
 
