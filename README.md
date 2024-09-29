@@ -209,10 +209,10 @@ Contributions are welcome! Please follow the standard GitHub flow:
 ## Contact Information
 
 - **Name**: Tanishq
-- **Email**: tanishq162005@example.com
-- **GitHub**: [Tanishq](https://github.com/tanishq1604)
+ **Email**: tanishq162005@example.com
+ **GitHub**: [Tanishq](https://github.com/tanishq1604)
  
 - **Name**: Shivansh Chauhan
-- **Email**: shivanshchauhan2005@gmail.com
-- **GitHub**: [Shivansh](https://github.com/Programmer-Shivansh)
+ **Email**: shivanshchauhan2005@gmail.com
+ **GitHub**: [Shivansh](https://github.com/Programmer-Shivansh)
 
