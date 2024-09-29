@@ -22,8 +22,7 @@
 
 ### Video Demo
 
-- **Video Walkthrough**: [FingerPay Demo](#)
-## **[Tutorial Video](https://drive.google.com/drive/folders/1iGlfKLvuEm_uSIM1fvlz-u4qAChesnHg?usp=sharing)**
+- **Video Walkthrough**: [FingerPay Demo](#https://drive.google.com/drive/folders/1iGlfKLvuEm_uSIM1fvlz-u4qAChesnHg?usp=sharing)
 
 
 ## Vision
@@ -173,7 +172,7 @@ This combination of innovative hardware, blockchain integration, and advanced an
 3. **Configure Blockchain Connections**
    - Add your Ethereum, Solana, and NeoX network keys in the `.env` file:
      ```bash
-     EXPO_PUBLIC_ALCHEMY_ETH_KEY=api-key
+      EXPO_PUBLIC_ALCHEMY_ETH_KEY=api-key
       EXPO_PUBLIC_ALCHEMY_ETH_URL=https://eth-sepolia.g.alchemy.com/v2/
       
       EXPO_PUBLIC_ALCHEMY_SOCKET_URL=wss://eth-sepolia.g.alchemy.com/v2/
