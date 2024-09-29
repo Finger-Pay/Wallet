@@ -81,33 +81,72 @@ Our vision is to revolutionize blockchain payments by making them secure, access
 
 ## Technical Architecture
 
-```plaintext
-+---------------------------------------------------------+
-|                     FingerPay App                       |
-+---------------------------------------------------------+
-|                 Biometric Authentication                |
-|      (Fingerprint Verification for Security)            |
-+---------------------------------------------------------+
-|                      QR Code Module                     |
-|        (Scan & Generate QR codes for Payment)           |
-+---------------------------------------------------------+
-|                    AI Payment Monitor                   |
-|   (Monitors Transactions and Detects Irregularities)    |
-+---------------------------------------------------------+
-|                  Multi-Chain Layer                      |
-|---------------------------------------------------------|
-|    +---------------+ +--------------+ +-------------+   |
-|    |   Ethereum     | |   Solana     | |    NeoX      | |
-|    |     (Web3.js)  | |   (Solana.js)| |   neon-core  | |
-|    +---------------+ +--------------+ +--------------+  |
-|                     Blockchain Adapters                 |
-+---------------------------------------------------------+
-|                Wallet Management Module                 |
-|         (Wallet Creation, Private Keys, Balances)       |
-+---------------------------------------------------------+
-|                Fingerprint Verification API             |
-+---------------------------------------------------------+
+## WALLET ARCHITECTURE
+
+```mermaid   
+graph TD
+    subgraph BN[Blockchain Networks]
+        ETH[Ethereum]
+        SOL[Solana]
+        NEOX[Neox]
+    end
+
+    subgraph BS[Backend Services]
+        MI[Multichain Integration]
+        API[REST API]
+        WS[WebSocket Service]
+        DB[(Database)]
+    end
+
+    subgraph FP[FingerPay App]
+        MW[Mobile Wallet]
+        SF[Security Features]
+        UF[User Features]
+    end
+
+
+    subgraph AI[AI Services]
+        AIM[AI Payment Monitoring]
+        ML[Machine Learning Models]
+    end
+
+    BN --> MI
+    MI --> API
+    API --> MW
+    WS --> MW
+    DB <--> API
+    
+    MW --> AIM
+    AIM --> ML
+
 ```
+
+## HARDWARE ARCHITECTURE
+```mermaid
+graph TD
+    User[User] -->|Scans| QR[QR Code]
+    QR -->|Payment Info| ESP[ESP Module]
+    PB[Power Button] -->|Controls Power| ESP
+    
+    subgraph Blockchain Explorers
+        ETH[Ethereum Explorer]
+        SOL[Solana Explorer]
+        NEOX[Neox Explorer]
+    end
+    
+    ESP -->|Check Transaction| ETH
+    ESP -->|Check Transaction| SOL
+    ESP -->|Check Transaction| NEOX
+    
+    ETH -->|Confirm Payment| ESP
+    SOL -->|Confirm Payment| ESP
+    NEOX -->|Confirm Payment| ESP
+    
+    ESP -->|Payment Details| VS[Voice Sensor]
+    VS -->|Speak Amount and Chain| User
+```
+
+
 
 ## Business Model
 
@@ -192,7 +231,7 @@ This combination of innovative hardware, blockchain integration, and advanced an
 4. **Run on Local Device**
    ```bash
     yarn 
-    npx expo go
+    npx expo start
    ```
 
 6. **Fingerprint Authentication Setup**
