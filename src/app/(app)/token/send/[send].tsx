@@ -189,6 +189,7 @@ export default function SendPage() {
   const [isAddressInputFocused, setIsAddressInputFocused] = useState(false);
   const [isAmountInputFocused, setIsAmountInputFocused] = useState(false);
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
+  const [inputPrize, setInputPrize] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -235,6 +236,8 @@ export default function SendPage() {
           .replace(/[^0-9.]/g, "")
           .replace(/(\..*)\./g, "$1");
         handleChange(field)(numericValue);
+        setInputPrize(numericValue); // Update input prize state
+        console.log(numericValue);
       };
     };
 
@@ -368,8 +371,10 @@ export default function SendPage() {
       pathname: ROUTES.sendConfirmation,
       params: {
         address: values.address,
-        amount: values.amount,
+        amount: inputPrize,
         chainName: chainName,
+        blockchain: chainName, // Add this line
+
       },
     });
   };

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { SafeAreaView } from "react-native";
 import { Image } from "expo-image";
 import styled, { useTheme } from "styled-components/native";
@@ -76,8 +76,15 @@ export default function Confirmation() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const router = useRouter();
-  const { txHash, blockchain } = useLocalSearchParams();
+  
+  console.log("local", useLocalSearchParams())
+  const { txHash, amount: rawAmount,blockchain  } = useLocalSearchParams();
+  console.log("Received amount:", Number(rawAmount)*100000000);
 
+  const [amount, setAmount] = useState<number>(
+    Array.isArray(rawAmount) ? parseFloat(rawAmount[0]) : parseFloat(rawAmount) || 0
+  );
+  console.log(amount);
   const chain = blockchain as string;
   const activeIndex = useSelector(
     (state: RootState) => state[chain].activeIndex
@@ -88,6 +95,23 @@ export default function Confirmation() {
       (tx) => tx.txHash === txHash
     )
   );
+  const sendSuccessNotification = async (chain, amount) => {
+    try {
+      const response = await fetch('http://10.43.1.0:5001/receive', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ chain, amount }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to send notification');
+      }
+      console.log('Success notification sent');
+    } catch (error) {
+      console.error('Error sending success notification:', error);
+    }
+  };
 
   useEffect(() => {
     if (txHash && blockchain) {
@@ -109,6 +133,27 @@ export default function Confirmation() {
     }
   }, [txHash, blockchain, dispatch]);
 
+  useEffect(() => {
+    const sendNotification = async () => {
+      // console.log('Transaction Confirmation:', transactionConfirmation);
+      // console.log("local", useLocalSearchParams())
+      // console.log('Chain:', chain, 'Amount:', amount);
+  
+      if (transactionConfirmation?.status === ConfirmationState.Confirmed ) {
+        try {
+          // if (isNaN(amount)) {
+          //   setAmount(0);
+          // }
+          await sendSuccessNotification(chain, amount);
+        } catch (error) {
+          console.error('Error during notification send:', error);
+        }
+      }
+    };
+  
+    sendNotification();
+  }, [transactionConfirmation, chain, amount]);
+  
   const getStatusContent = (status: ConfirmationState) => {
     switch (status) {
       case ConfirmationState.Pending:
