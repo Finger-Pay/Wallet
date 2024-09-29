@@ -1,9 +1,10 @@
 # FingerPay
 
 <div align="left">
-  <img src="assets/icon.png" alt="Logo"height="500"  width="450"/>
-    <img src="assets/hardware.png" alt="Logo" height="500" width="550"/>
+  <img src="assets/icon.png" alt="Icon" height="500" width="450" style="display:inline-block;"/>
+  <img src="assets/hardware.png" alt="Hardware" height="500" width="550" style="display:inline-block;"/>
 </div>
+
 
 **FingerPay** is a next-generation wallet application that offers a seamless multi-chain experience across Ethereum, Solana, and NeoX blockchains. With enhanced security features like fingerprint authentication and an AI-driven payment monitoring system, FingerPay is designed to make blockchain payments more secure, intuitive, and efficient.
 
