@@ -1,8 +1,8 @@
 # FingerPay
 
-<div align="left">
-  <img src="assets/icon.png" alt="Icon" height="500" width="400" style="display:inline-block;"/>
-  <img src="assets/hardware.png" alt="Hardware" height="500" width="500" style="display:inline-block;"/>
+<div align="left" style="display:inline-block;">
+  <img src="assets/icon.png" alt="Icon" height="500" width="450"/>
+  <img src="assets/hardware.png" alt="Hardware" height="500" width="550" />
 </div>
 
 
